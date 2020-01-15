@@ -6,7 +6,7 @@ from skimage.morphology import thin
 import matplotlib.pyplot as plt
 from PIL import Image
 import xml.etree.ElementTree as ET
-from cStringIO import StringIO
+from io import StringIO
 
 def get_traces_data(inkml_file_abs_path):
 
@@ -207,7 +207,7 @@ def draw_pattern(trace_group, box_size):
 
     			'Iterate through list of traces endpoints'
     			for pt_idx in range(len(trace) - 1):
-    				print pt_idx, trace[pt_idx]
+    				print (pt_idx, trace[pt_idx])
 
     				'Indices of pixels that belong to the line. May be used to directly index into an array'
     				pattern_drawn[line(r0=int(trace[pt_idx][1]), c0=int(trace[pt_idx][0]),
