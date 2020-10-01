@@ -1,20 +1,18 @@
-import pickle as p
-import cv2, json,one_hot, scipy.misc, math
 import numpy as np
 from skimage.draw import line
 from skimage.morphology import thin
 import matplotlib.pyplot as plt
-from PIL import Image
 import xml.etree.ElementTree as ET
 from io import StringIO
 
-def get_traces_data(inkml_file_abs_path):
+def get_traces_data(inkml_file_abs_path, xmlns='{http://www.w3.org/2003/InkML}'):
 
     	traces_data = []
 
     	tree = ET.parse(inkml_file_abs_path)
     	root = tree.getroot()
-    	doc_namespace = "{http://www.w3.org/2003/InkML}"
+    	# doc_namespace = "{http://www.w3.org/2003/InkML}"
+    	doc_namespace = xmlns
 
     	'Stores traces_all with their corresponding id'
     	traces_all = [{'id': trace_tag.get('id'),
@@ -216,7 +214,7 @@ def draw_pattern(trace_group, box_size):
     	return pattern_drawn
 
     
-def inkml2img(input_path, output_path):
+def inkml2img(input_path, output_path, color='black'):
     traces = get_traces_data(input_path)
     plt.gca().invert_yaxis()
     plt.gca().set_aspect('equal', adjustable='box')
@@ -231,20 +229,12 @@ def inkml2img(input_path, output_path):
         for subls in ls:
             data = np.array(subls)
             x,y=zip(*data)
-            plt.plot(x,y,linewidth=2,c='black')
+            plt.plot(x,y,linewidth=2,c=color)
     plt.savefig(output_path, bbox_inches='tight', dpi=100)
     plt.gcf().clear()
     
-def latex2img(formula, fontsize=12, dpi=300, format_='svg'):
-    """Renders LaTeX formula into image.
-    """
-    fig = plt.figure(figsize=(0.01, 0.01))
-#     fig.text(0, 0, u'${}$'.format(formula), fontsize=fontsize)
-    fig.text(0, 0, formula, fontsize=fontsize,style='italic')
-    buffer_ = StringIO()
-    fig.savefig(buffer_, dpi=dpi, transparent=False, format=format_, bbox_inches='tight', pad_inches=0.1)
-    plt.close(fig)
-    return buffer_.getvalue()
-    
-    
-    
+if __name__ == "__main__":
+	import sys
+	input_inkml = sys.argv[1]
+	output_path = sys.argv[2]
+	inkml2img(input_inkml, output_path, color='#284054')
